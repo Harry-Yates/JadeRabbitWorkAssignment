@@ -112,7 +112,7 @@ async function run() {
   const MIDWAY_LINE_POSITION = app.screen.height / 2;
 
   const line = new PIXI.Graphics();
-  line.lineStyle(2, 0xffa500);
+  line.lineStyle(3, 0xf1d433);
   line.moveTo(0, MIDWAY_LINE_POSITION);
   line.lineTo(app.screen.width, MIDWAY_LINE_POSITION);
   app.stage.addChild(line);

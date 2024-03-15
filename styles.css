@@ -33,7 +33,7 @@ body {
 
 .game-header__title {
   font-size: 47.5px;
-  color: rgb(107, 30, 208);
+  color: #760000;
   margin-bottom: 20px;
   line-height: 0;
 }
@@ -45,7 +45,7 @@ body {
 .game-header__assignment {
   font-size: 27px;
   font-weight: bold;
-  color: rgba(107, 30, 208, 0.58);
+  color: #f1d433;
   line-height: 0.5;
 }
 
