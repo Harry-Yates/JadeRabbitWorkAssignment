@@ -137,39 +137,70 @@ async function run() {
   }
 
   function alignSymbolsAndCheckWin() {
+    // Define OFFSET just inside the function where it's used, adjust this number to fine-tune the alignment
+    const OFFSET = 40; // Start with 0 and then adjust based on your testing results
+
     reels.forEach((reel) => {
       let closestSymbol = null;
       let minDistance = Number.MAX_VALUE;
+
+      // Find the symbol closest to the midway line
       reel.children.forEach((symbol) => {
-        const distance = Math.abs(
-          MIDWAY_LINE_POSITION - (symbol.y + SYMBOL_SIZE / 2)
-        );
+        const symbolCenter = symbol.y + SYMBOL_SIZE / 2;
+        const distance = Math.abs(MIDWAY_LINE_POSITION - symbolCenter);
         if (distance < minDistance) {
           closestSymbol = symbol;
           minDistance = distance;
         }
       });
+
+      // Calculate the adjustment needed so that the middle of the symbol aligns with the midway line
+      // Now including the OFFSET for fine-tuning
       const adjustment =
-        MIDWAY_LINE_POSITION - (closestSymbol.y + SYMBOL_SIZE / 2);
+        MIDWAY_LINE_POSITION - (closestSymbol.y + SYMBOL_SIZE / 2) + OFFSET;
+
+      // Apply the adjustment to all symbols in the reel to maintain relative positions
       reel.children.forEach((symbol) => (symbol.y += adjustment));
+
+      // After adjustment, ensure the symbols are spaced correctly
+      const closestSymbolIndex = reel.children.indexOf(closestSymbol);
+      for (let i = closestSymbolIndex - 1; i >= 0; i--) {
+        reel.children[i].y =
+          reel.children[i + 1].y - SYMBOL_SIZE - SYMBOL_SPACING;
+      }
+      for (let i = closestSymbolIndex + 1; i < reel.children.length; i++) {
+        reel.children[i].y =
+          reel.children[i - 1].y + SYMBOL_SIZE + SYMBOL_SPACING;
+      }
     });
+
+    // Check for a win after the symbols have been aligned
     checkWin();
   }
 
   function checkWin() {
-    const symbolsOnLine = reels.map(
-      (reel) =>
-        reel.children.find(
-          (symbol) =>
-            Math.abs(MIDWAY_LINE_POSITION - (symbol.y + SYMBOL_SIZE / 2)) <
-            SYMBOL_SIZE / 2
-        ).texture.textureCacheIds[0]
-    );
-    const isWin = winningCombinations.some((combination) =>
-      combination.every((symbolName, index) =>
-        symbolsOnLine[index].includes(symbolName)
-      )
-    );
+    const symbolsOnLine = reels.map((reel) => {
+      // Find the symbol on the line, if there's no symbol found, return a placeholder or `undefined`
+      const symbolOnLine = reel.children.find((symbol) => {
+        return (
+          Math.abs(MIDWAY_LINE_POSITION - (symbol.y + SYMBOL_SIZE / 2)) <
+          SYMBOL_SIZE / 2
+        );
+      });
+
+      // Check if the symbol is defined before trying to access its properties
+      return symbolOnLine ? symbolOnLine.texture.textureCacheIds[0] : undefined;
+    });
+
+    // Ensure that no undefined symbols are being compared
+    const isWin =
+      symbolsOnLine.every((symbolId) => symbolId !== undefined) &&
+      winningCombinations.some((combination) => {
+        return combination.every((symbolName, index) =>
+          symbolsOnLine[index].includes(symbolName)
+        );
+      });
+
     console.log(isWin ? "Win!" : "Lose.");
   }
 
