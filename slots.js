@@ -4,6 +4,7 @@ const app = new PIXI.Application({
   width: 800,
   height: 600,
   antialias: true,
+  background: 0xffffff,
   transparent: false,
   resolution: 1,
 });
@@ -12,7 +13,7 @@ const backgroundMusic = new Howl({
   src: ["./music/02. Jungle Madness.mp3"],
   autoplay: true,
   loop: true,
-  volume: 0.5,
+  volume: 0.4,
 });
 
 backgroundMusic.play();
