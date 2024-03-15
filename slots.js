@@ -8,6 +8,11 @@ const app = new PIXI.Application({
   resolution: 1,
 });
 
+let resultLogged = false;
+// At the top of your script, after PIXI application initialization
+const testMode = true;
+const forceWin = true; // Force a win condition for testing
+
 window.addEventListener("load", async () => {
   await loadAssets();
   const appContainer = document.createElement("div");
@@ -27,7 +32,6 @@ async function loadAssets() {
 async function run() {
   const reelContainer = new PIXI.Container();
   app.stage.addChild(reelContainer);
-  let resultLogged = false;
 
   reelContainer.x = app.screen.width / 2 - 385;
   reelContainer.y = app.screen.height / 2 - 690 / 2;
@@ -39,15 +43,6 @@ async function run() {
 
   // Assuming reelSymbols is already defined as shown previously
   const reelSymbols = [
-    "High1.png",
-    "High2.png",
-    "High3.png",
-    "High4.png",
-    "Wild.png",
-    "Low1.png",
-    "Low2.png",
-    "Low3.png",
-    "Low4.png",
     "High1.png",
     "High2.png",
     "High3.png",
@@ -119,6 +114,7 @@ async function run() {
 
   function startSpinning() {
     spinning = true;
+    resultLogged = false; // Reset the result flag at the start of each spin
     stoppingPoints.forEach((point) => (point.stopped = false));
     reels.forEach((reel, index) => {
       reel.children.forEach(
@@ -208,34 +204,65 @@ async function run() {
     });
   }
 
+  function playWinAnimation() {
+    const animationFrames = [];
+    for (let i = 0; i <= 25; i++) {
+      const frameName = `WinsweepBox${String(i).padStart(2, "0")}.png`;
+      const texture = PIXI.Texture.from(frameName);
+      animationFrames.push(texture);
+    }
+
+    const winAnimation = new PIXI.AnimatedSprite(animationFrames);
+    winAnimation.animationSpeed = 0.5; // Adjust speed as needed
+    winAnimation.loop = false; // Set to false if the animation should only play once
+    winAnimation.onComplete = () => {
+      app.stage.removeChild(winAnimation); // Remove the animation after it's complete
+    };
+    winAnimation.x = (app.screen.width - winAnimation.width) / 2; // Center the animation
+    winAnimation.y = (app.screen.height - winAnimation.height) / 2;
+    winAnimation.play();
+    app.stage.addChild(winAnimation);
+  }
+
   function checkWin() {
     if (resultLogged) return; // Skip if the result has already been logged
 
-    const symbolsOnLine = reels.map((reel) => {
-      const symbolOnLine = reel.children.find((symbol) => {
-        return (
-          Math.abs(MIDWAY_LINE_POSITION - (symbol.y + SYMBOL_SIZE / 2)) <
-          SYMBOL_SIZE / 2
-        );
-      });
-      return symbolOnLine ? symbolOnLine.texture.textureCacheIds[0] : undefined;
-    });
+    let isWin;
 
-    const isWin =
-      symbolsOnLine.every((symbolId) => symbolId !== undefined) &&
-      winningCombinations.some((combination) => {
-        return combination.every((symbolName, index) =>
-          symbolsOnLine[index].includes(symbolName)
-        );
+    if (testMode) {
+      // For testing, force the outcome based on the forceWin flag
+      isWin = forceWin;
+    } else {
+      // Regular game logic to determine if it's a win
+      const symbolsOnLine = reels.map((reel) => {
+        const symbolOnLine = reel.children.find((symbol) => {
+          return (
+            Math.abs(MIDWAY_LINE_POSITION - (symbol.y + SYMBOL_SIZE / 2)) <
+            SYMBOL_SIZE / 2
+          );
+        });
+        return symbolOnLine
+          ? symbolOnLine.texture.textureCacheIds[0]
+          : undefined;
       });
+
+      isWin =
+        symbolsOnLine.every((symbolId) => symbolId !== undefined) &&
+        winningCombinations.some((combination) => {
+          return combination.every((symbolName, index) =>
+            symbolsOnLine[index].includes(symbolName)
+          );
+        });
+    }
 
     if (isWin) {
       console.log("You Win!");
+      playWinAnimation(); // Play the win animation here
     } else {
       console.log("You Lose");
     }
 
-    resultLogged = true; // Update the flag to avoid logging again
+    resultLogged = true;
   }
 
   app.ticker.add((delta) => {
