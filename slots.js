@@ -10,8 +10,8 @@ const app = new PIXI.Application({
 
 let resultLogged = false;
 
-const testMode = true;
-const forceWin = true;
+const testMode = false;
+const forceWin = false;
 
 window.addEventListener("load", async () => {
   await loadAssets();
