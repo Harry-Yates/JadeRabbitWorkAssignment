@@ -9,16 +9,16 @@ const app = new PIXI.Application({
 });
 
 let resultLogged = false;
-// At the top of your script, after PIXI application initialization
+
 const testMode = true;
-const forceWin = true; // Force a win condition for testing
+const forceWin = true;
 
 window.addEventListener("load", async () => {
   await loadAssets();
   const appContainer = document.createElement("div");
   appContainer.id = "app-container";
   document.body.appendChild(appContainer);
-  appContainer.appendChild(app.view); // Append the PIXI app's view to a container div
+  appContainer.appendChild(app.view);
 
   await run();
 });
@@ -41,7 +41,6 @@ async function run() {
     return acc;
   }, {});
 
-  // Assuming reelSymbols is already defined as shown previously
   const reelSymbols = [
     "High1.png",
     "High2.png",
@@ -54,8 +53,6 @@ async function run() {
     "Low4.png",
   ];
 
-  // Dynamically generate winning combinations based on the reelSymbols
-  // This assumes a winning combination is three of the same symbol
   const winningCombinations = reelSymbols.map((symbol) => [
     symbol,
     symbol,
@@ -114,7 +111,7 @@ async function run() {
 
   function startSpinning() {
     spinning = true;
-    resultLogged = false; // Reset the result flag at the start of each spin
+    resultLogged = false;
     stoppingPoints.forEach((point) => (point.stopped = false));
     reels.forEach((reel, index) => {
       reel.children.forEach(
@@ -138,16 +135,14 @@ async function run() {
   }
 
   function alignSymbolsAndCheckWin() {
-    // Define OFFSET just inside the function where it's used, adjust this number to fine-tune the alignment
-    const OFFSET = 40; // Start with 0 and then adjust based on your testing results
-    const ANIMATION_DURATION = 500; // Duration of the animation in milliseconds
+    const OFFSET = 40;
+    const ANIMATION_DURATION = 500;
     const startTime = Date.now();
 
     reels.forEach((reel, reelIndex) => {
       let closestSymbol = null;
       let minDistance = Number.MAX_VALUE;
 
-      // Find the symbol closest to the midway line
       reel.children.forEach((symbol) => {
         const symbolCenter = symbol.y + SYMBOL_SIZE / 2;
         const distance = Math.abs(MIDWAY_LINE_POSITION - symbolCenter);
@@ -157,17 +152,13 @@ async function run() {
         }
       });
 
-      // Calculate the adjustment needed so that the middle of the symbol aligns with the midway line
-      // Now including the OFFSET for fine-tuning
       const adjustment =
         MIDWAY_LINE_POSITION - (closestSymbol.y + SYMBOL_SIZE / 2) + OFFSET;
 
-      // Animate the adjustment to all symbols in the reel to maintain relative positions
       reel.children.forEach((symbol) => {
         const start = symbol.y;
         const end = symbol.y + adjustment;
 
-        // Animation loop
         function animate() {
           const now = Date.now();
           const progress = Math.min(1, (now - startTime) / ANIMATION_DURATION);
@@ -177,7 +168,6 @@ async function run() {
           if (progress < 1) {
             requestAnimationFrame(animate);
           } else {
-            // After adjustment, ensure the symbols are spaced correctly
             const closestSymbolIndex = reel.children.indexOf(closestSymbol);
             for (let i = closestSymbolIndex - 1; i >= 0; i--) {
               reel.children[i].y =
@@ -192,7 +182,6 @@ async function run() {
                 reel.children[i - 1].y + SYMBOL_SIZE + SYMBOL_SPACING;
             }
 
-            // Check for a win after the last reel has been animated
             if (reelIndex === reels.length - 1) {
               checkWin();
             }
@@ -213,19 +202,16 @@ async function run() {
     }
 
     const winAnimation = new PIXI.AnimatedSprite(animationFrames);
-    winAnimation.animationSpeed = 0.5; // Adjust speed as needed
-    winAnimation.loop = false; // Set to false if the animation should only play once
+    winAnimation.animationSpeed = 0.5;
+    winAnimation.loop = false;
 
-    // Calculate bounds and adjust the size and position
     const bounds = calculateWinningSymbolsBounds();
-    const padding = 800; // Increase the size beyond the symbol area
+    const padding = 800;
 
-    // Calculate the size to maintain the aspect ratio, if needed
     const aspectRatio = winAnimation.width / winAnimation.height;
-    winAnimation.width = bounds.maxX - bounds.minX + padding; // Maintain aspect ratio if necessary
+    winAnimation.width = bounds.maxX - bounds.minX + padding;
     winAnimation.height = winAnimation.width / aspectRatio;
 
-    // Center over the winning symbols and adjust downwards
     winAnimation.x =
       bounds.minX -
       padding / 2 +
@@ -243,36 +229,30 @@ async function run() {
     app.stage.sortableChildren = true;
 
     winAnimation.onComplete = () => {
-      app.stage.removeChild(winAnimation); // Clean up the animation when it's finished
+      app.stage.removeChild(winAnimation);
     };
 
     winAnimation.play();
     app.stage.addChild(winAnimation);
   }
 
-  // Hypothetical function to calculate bounds based on winning symbols
   function calculateWinningSymbolsBounds() {
-    // This should be replaced with your actual logic to determine the bounds
-    // For the sake of the example, let's define some static values
     let minX = 100,
       minY = 100,
       maxX = 400,
-      maxY = 300; // Hypothetical bounds
+      maxY = 300;
 
-    // In your real implementation, you would calculate the bounds based on the actual positions and sizes of the winning symbols
     return { minX, minY, maxX, maxY };
   }
 
   function checkWin() {
-    if (resultLogged) return; // Skip if the result has already been logged
+    if (resultLogged) return;
 
     let isWin;
 
     if (testMode) {
-      // For testing, force the outcome based on the forceWin flag
       isWin = forceWin;
     } else {
-      // Regular game logic to determine if it's a win
       const symbolsOnLine = reels.map((reel) => {
         const symbolOnLine = reel.children.find((symbol) => {
           return (
@@ -296,7 +276,7 @@ async function run() {
 
     if (isWin) {
       console.log("You Win!");
-      playWinAnimation(); // Play the win animation here
+      playWinAnimation();
     } else {
       console.log("You Lose");
     }
@@ -310,25 +290,22 @@ async function run() {
       reels.forEach((reel, index) => {
         const { deceleration } = reelSettings[index];
         reel.children.forEach((symbol) => {
-          // Ensure 'symbol' is correctly defined and used within this scope
           symbol.y += symbol.vy * delta;
           if (symbol.y > REEL_HEIGHT) {
-            resetSymbolPosition(symbol, reel); // 'symbol' and 'reel' are correctly passed and should be defined within 'resetSymbolPosition'
+            resetSymbolPosition(symbol, reel);
           }
           symbol.vy = Math.max(symbol.vy - deceleration, 0);
         });
-        // This is a likely place for the error if 'symbol' was referenced outside its defining loop
         if (
           !stoppingPoints[index].stopped ||
           reel.children.some((symbol) => symbol.vy > 0)
         ) {
-          // Correct usage of 'symbol' within 'some' method
           allReelsStopped = false;
         }
       });
       if (allReelsStopped) {
         spinning = false;
-        alignSymbolsAndCheckWin(); // Ensure this function does not incorrectly reference 'symbol'
+        alignSymbolsAndCheckWin();
       }
     }
   });
