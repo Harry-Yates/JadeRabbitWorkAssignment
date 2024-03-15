@@ -1,0 +1,59 @@
+html,
+body {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #100f0f;
+}
+
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-header {
+  text-align: start;
+  margin-bottom: 10px;
+}
+
+.game-header__title {
+  font-size: 47.5px;
+  color: #00ffff;
+  margin-bottom: 20px;
+  line-height: 0;
+}
+
+.game-header__username {
+  font-size: 20px;
+}
+
+.game-header__assignment {
+  font-size: 27px;
+  font-weight: bold;
+  color: #535151;
+  line-height: 0.5;
+}
+
+#app-container {
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex: 1;
+}
+
+canvas {
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #000, 0 0 15px rgba(0, 0, 0, 0.5);
+  background-color: #000;
+  display: block;
+  max-width: 800px;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: solid 3px #000;
+}
