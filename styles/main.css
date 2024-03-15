@@ -12,7 +12,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-image: url("./assets/background.webp"); /* Update with the actual path to your image */
+  background-image: url("../assets/background.webp"); /* Update with the actual path to your image */
   background-size: cover; /* Cover ensures that the background covers the entire container */
   background-position: center; /* Center the background image */
   background-repeat: repeat; /* Do not repeat the image */

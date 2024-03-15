@@ -1,4 +1,6 @@
 import SpinButton from "./components/SpinButton.js";
+import GameState from "./managers/GameState.js";
+import SoundManager from "./managers/SoundManager.js";
 
 const app = new PIXI.Application({
   width: 800,
@@ -9,20 +11,9 @@ const app = new PIXI.Application({
   resolution: 1,
 });
 
-const backgroundMusic = new Howl({
-  src: ["./music/02. Jungle Madness.mp3"],
-  autoplay: true,
-  loop: true,
-  volume: 0.4,
-});
-
-backgroundMusic.play();
-
-// NOTE Pause
-// backgroundMusic.pause();
-
-// NOTE Stop
-// backgroundMusic.stop();
+const gameState = new GameState();
+const soundManager = new SoundManager();
+soundManager.playBackgroundMusic();
 
 let resultLogged = false;
 
