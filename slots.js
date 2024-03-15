@@ -27,6 +27,7 @@ async function loadAssets() {
 async function run() {
   const reelContainer = new PIXI.Container();
   app.stage.addChild(reelContainer);
+  let resultLogged = false;
 
   reelContainer.x = app.screen.width / 2 - 385;
   reelContainer.y = app.screen.height / 2 - 690 / 2;
@@ -47,6 +48,15 @@ async function run() {
     "Low2.png",
     "Low3.png",
     "Low4.png",
+    "High1.png",
+    "High2.png",
+    "High3.png",
+    "High4.png",
+    "Wild.png",
+    "Low1.png",
+    "Low2.png",
+    "Low3.png",
+    "Low4.png",
   ];
 
   // Dynamically generate winning combinations based on the reelSymbols
@@ -56,11 +66,6 @@ async function run() {
     symbol,
     symbol,
   ]);
-
-  // Continue with your run function or wherever you need to use winningCombinations
-  async function run() {
-    // The rest of your code where winningCombinations is used
-  }
 
   const reels = [];
   for (let i = 0; i < 3; i++) {
@@ -105,11 +110,11 @@ async function run() {
   app.stage.addChild(line);
 
   function getRandomSpinSpeed() {
-    return Math.random() * (80 - 40) + 40;
+    return Math.random() * (60 - 30) + 40;
   }
 
   function getRandomDeceleration() {
-    return Math.random() * (0.2 - 0.05) + 0.05;
+    return Math.random() * (0.3 - 0.1) + 0.1;
   }
 
   function startSpinning() {
@@ -139,8 +144,10 @@ async function run() {
   function alignSymbolsAndCheckWin() {
     // Define OFFSET just inside the function where it's used, adjust this number to fine-tune the alignment
     const OFFSET = 40; // Start with 0 and then adjust based on your testing results
+    const ANIMATION_DURATION = 500; // Duration of the animation in milliseconds
+    const startTime = Date.now();
 
-    reels.forEach((reel) => {
+    reels.forEach((reel, reelIndex) => {
       let closestSymbol = null;
       let minDistance = Number.MAX_VALUE;
 
@@ -159,40 +166,61 @@ async function run() {
       const adjustment =
         MIDWAY_LINE_POSITION - (closestSymbol.y + SYMBOL_SIZE / 2) + OFFSET;
 
-      // Apply the adjustment to all symbols in the reel to maintain relative positions
-      reel.children.forEach((symbol) => (symbol.y += adjustment));
+      // Animate the adjustment to all symbols in the reel to maintain relative positions
+      reel.children.forEach((symbol) => {
+        const start = symbol.y;
+        const end = symbol.y + adjustment;
 
-      // After adjustment, ensure the symbols are spaced correctly
-      const closestSymbolIndex = reel.children.indexOf(closestSymbol);
-      for (let i = closestSymbolIndex - 1; i >= 0; i--) {
-        reel.children[i].y =
-          reel.children[i + 1].y - SYMBOL_SIZE - SYMBOL_SPACING;
-      }
-      for (let i = closestSymbolIndex + 1; i < reel.children.length; i++) {
-        reel.children[i].y =
-          reel.children[i - 1].y + SYMBOL_SIZE + SYMBOL_SPACING;
-      }
+        // Animation loop
+        function animate() {
+          const now = Date.now();
+          const progress = Math.min(1, (now - startTime) / ANIMATION_DURATION);
+
+          symbol.y = start + (end - start) * progress;
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            // After adjustment, ensure the symbols are spaced correctly
+            const closestSymbolIndex = reel.children.indexOf(closestSymbol);
+            for (let i = closestSymbolIndex - 1; i >= 0; i--) {
+              reel.children[i].y =
+                reel.children[i + 1].y - SYMBOL_SIZE - SYMBOL_SPACING;
+            }
+            for (
+              let i = closestSymbolIndex + 1;
+              i < reel.children.length;
+              i++
+            ) {
+              reel.children[i].y =
+                reel.children[i - 1].y + SYMBOL_SIZE + SYMBOL_SPACING;
+            }
+
+            // Check for a win after the last reel has been animated
+            if (reelIndex === reels.length - 1) {
+              checkWin();
+            }
+          }
+        }
+
+        animate();
+      });
     });
-
-    // Check for a win after the symbols have been aligned
-    checkWin();
   }
 
   function checkWin() {
+    if (resultLogged) return; // Skip if the result has already been logged
+
     const symbolsOnLine = reels.map((reel) => {
-      // Find the symbol on the line, if there's no symbol found, return a placeholder or `undefined`
       const symbolOnLine = reel.children.find((symbol) => {
         return (
           Math.abs(MIDWAY_LINE_POSITION - (symbol.y + SYMBOL_SIZE / 2)) <
           SYMBOL_SIZE / 2
         );
       });
-
-      // Check if the symbol is defined before trying to access its properties
       return symbolOnLine ? symbolOnLine.texture.textureCacheIds[0] : undefined;
     });
 
-    // Ensure that no undefined symbols are being compared
     const isWin =
       symbolsOnLine.every((symbolId) => symbolId !== undefined) &&
       winningCombinations.some((combination) => {
@@ -201,7 +229,13 @@ async function run() {
         );
       });
 
-    console.log(isWin ? "Win!" : "Lose.");
+    if (isWin) {
+      console.log("You Win!");
+    } else {
+      console.log("You Lose");
+    }
+
+    resultLogged = true; // Update the flag to avoid logging again
   }
 
   app.ticker.add((delta) => {
