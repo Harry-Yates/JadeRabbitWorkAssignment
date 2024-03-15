@@ -1,10 +1,22 @@
-html,
+html {
+  height: 100%; /* Ensure that the html element covers the full height */
+}
+
+body {
+  min-height: 100%; /* Ensure that the body covers the full height */
+  background-attachment: fixed; /* Keep the background fixed when scrolling */
+}
+
 body {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   background-color: #100f0f;
+  background-image: url("./assets/background.webp"); /* Update with the actual path to your image */
+  background-size: cover; /* Cover ensures that the background covers the entire container */
+  background-position: center; /* Center the background image */
+  background-repeat: repeat; /* Do not repeat the image */
 }
 
 .game-container {
@@ -22,7 +34,7 @@ body {
 
 .game-header__title {
   font-size: 47.5px;
-  color: #9c2bc2;
+  color: rgb(107, 30, 208);
   margin-bottom: 20px;
   line-height: 0;
 }
@@ -34,7 +46,7 @@ body {
 .game-header__assignment {
   font-size: 27px;
   font-weight: bold;
-  color: #535151;
+  color: rgba(107, 30, 208, 0.58);
   line-height: 0.5;
 }
 
