@@ -8,6 +8,21 @@ const app = new PIXI.Application({
   resolution: 1,
 });
 
+const backgroundMusic = new Howl({
+  src: ["./music/02. Jungle Madness.mp3"],
+  autoplay: true,
+  loop: true,
+  volume: 0.5,
+});
+
+backgroundMusic.play();
+
+// NOTE Pause
+// backgroundMusic.pause();
+
+// NOTE Stop
+// backgroundMusic.stop();
+
 let resultLogged = false;
 
 const testMode = false;
