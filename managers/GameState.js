@@ -2,24 +2,19 @@ class GameState {
   constructor() {
     this.isSpinning = false;
     this.resultLogged = false;
-    // Add more state variables as needed
   }
 
-  startSpinning() {
-    this.isSpinning = true;
-    this.resultLogged = false;
-    // Add logic for starting spinning
-  }
+  // startSpinning() {
+  //   this.isSpinning = true;
+  //   this.resultLogged = false;
+  // }
 
-  stopSpinning() {
-    this.isSpinning = false;
-    // Add logic for stopping spinning
-  }
-
-  logResult(win) {
-    this.resultLogged = true;
-    // Logic for handling win/lose
-  }
+  // stopSpinning() {
+  //   stoppingPoints.forEach((point, index) => {
+  //     point.position = reels[index].y + REEL_HEIGHT * 2;
+  //     point.stopped = true;
+  //   });
+  // }
 }
 
 export default GameState;

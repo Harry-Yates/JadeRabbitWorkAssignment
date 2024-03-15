@@ -1,5 +1,5 @@
 import SpinButton from "./components/SpinButton.js";
-import GameState from "./managers/GameState.js";
+// import GameState from "./managers/GameState.js";
 import SoundManager from "./managers/SoundManager.js";
 
 const app = new PIXI.Application({
@@ -11,7 +11,7 @@ const app = new PIXI.Application({
   resolution: 1,
 });
 
-const gameState = new GameState();
+// const gameState = new GameState();
 const soundManager = new SoundManager();
 soundManager.playBackgroundMusic();
 
@@ -49,15 +49,43 @@ async function run() {
   }, {});
 
   const reelSymbols = [
-    "High1.png",
-    "High2.png",
-    "High3.png",
-    "High4.png",
-    "Wild.png",
     "Low1.png",
+    "High3.png",
+    "High2.png",
     "Low2.png",
+    "Wild.png",
+    "High4.png",
+    "Low4.png",
+    "High1.png",
+    "Low4.png",
+    "High4.png",
+    "Low2.png",
+    "Low1.png",
+    "Wild.png",
+    "Low3.png",
+    "High3.png",
+    "High2.png",
+    "Low3.png",
+    "High1.png",
+    "High3.png",
+    "Low1.png",
+    "High2.png",
+    "High4.png",
+    "Low3.png",
+    "Wild.png",
+    "Low2.png",
+    "Low4.png",
+    "High4.png",
+    "High2.png",
+    "High1.png",
+    "Low1.png",
     "Low3.png",
     "Low4.png",
+    "High3.png",
+    "Wild.png",
+    "High1.png",
+    "High4.png",
+    "Low2.png",
   ];
 
   const winningCombinations = reelSymbols.map((symbol) => [
@@ -86,6 +114,7 @@ async function run() {
   const VISIBLE_SYMBOLS = 3;
   const REEL_HEIGHT =
     SYMBOL_SIZE * VISIBLE_SYMBOLS + SYMBOL_SPACING * (VISIBLE_SYMBOLS - 1);
+
   const spinButton = new SpinButton(app, startSpinning, stopSpinning);
 
   function stopAutoplay() {
