@@ -215,13 +215,52 @@ async function run() {
     const winAnimation = new PIXI.AnimatedSprite(animationFrames);
     winAnimation.animationSpeed = 0.5; // Adjust speed as needed
     winAnimation.loop = false; // Set to false if the animation should only play once
+
+    // Calculate bounds and adjust the size and position
+    const bounds = calculateWinningSymbolsBounds();
+    const padding = 800; // Increase the size beyond the symbol area
+
+    // Calculate the size to maintain the aspect ratio, if needed
+    const aspectRatio = winAnimation.width / winAnimation.height;
+    winAnimation.width = bounds.maxX - bounds.minX + padding; // Maintain aspect ratio if necessary
+    winAnimation.height = winAnimation.width / aspectRatio;
+
+    // Center over the winning symbols and adjust downwards
+    winAnimation.x =
+      bounds.minX -
+      padding / 2 +
+      (bounds.maxX - bounds.minX) / 2 -
+      winAnimation.width / 2 +
+      550;
+
+    winAnimation.y =
+      bounds.minY +
+      (bounds.maxY - bounds.minY) / 2 -
+      winAnimation.height / 2 +
+      150;
+
+    winAnimation.zIndex = -1;
+    app.stage.sortableChildren = true;
+
     winAnimation.onComplete = () => {
-      app.stage.removeChild(winAnimation); // Remove the animation after it's complete
+      app.stage.removeChild(winAnimation); // Clean up the animation when it's finished
     };
-    winAnimation.x = (app.screen.width - winAnimation.width) / 2; // Center the animation
-    winAnimation.y = (app.screen.height - winAnimation.height) / 2;
+
     winAnimation.play();
     app.stage.addChild(winAnimation);
+  }
+
+  // Hypothetical function to calculate bounds based on winning symbols
+  function calculateWinningSymbolsBounds() {
+    // This should be replaced with your actual logic to determine the bounds
+    // For the sake of the example, let's define some static values
+    let minX = 100,
+      minY = 100,
+      maxX = 400,
+      maxY = 300; // Hypothetical bounds
+
+    // In your real implementation, you would calculate the bounds based on the actual positions and sizes of the winning symbols
+    return { minX, minY, maxX, maxY };
   }
 
   function checkWin() {
