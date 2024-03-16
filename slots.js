@@ -1,5 +1,5 @@
 import SpinButton from "./components/SpinButton.js";
-// import GameState from "./managers/GameState.js";
+
 import SoundManager from "./managers/SoundManager.js";
 
 const app = new PIXI.Application({
@@ -11,7 +11,6 @@ const app = new PIXI.Application({
   resolution: 1,
 });
 
-// const gameState = new GameState();
 const soundManager = new SoundManager();
 soundManager.playBackgroundMusic();
 
